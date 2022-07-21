@@ -41,6 +41,10 @@ public final class Accounts {
                 } catch (Exception e) {
                     fail("Could not load credentials", e);
                 }
+            } else {
+                if (TestConfiguration.useVault()) {
+                    loader.renewToken();
+                }
             }
             T account = loader.get(credentialsId, accountClass);
             if (account == null) {

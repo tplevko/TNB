@@ -42,6 +42,16 @@ public class VaultCredentialsLoader implements CredentialsLoader {
     }
 
     @Override
+    public void renewToken() {
+        try {
+            System.out.println("Renewing Vault token");
+            vault.auth().renewSelf();
+        } catch (VaultException e) {
+            throw new RuntimeException("Could not renew the token: ", e);
+        }
+    }
+
+    @Override
     public <T extends Account> T get(String credentialsId, Class<T> accountClass) {
         try {
             return mapper.readValue(get(String.format(pathPattern, credentialsId)).toString(), accountClass);
@@ -51,7 +61,7 @@ public class VaultCredentialsLoader implements CredentialsLoader {
     }
 
     public JsonObject get(String path) throws VaultException {
-        return vault.logical()
+        return vault.withRetries(5, 1000).logical()
             .read(path)
             .getDataObject();
     }

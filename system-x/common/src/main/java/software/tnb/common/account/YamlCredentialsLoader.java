@@ -33,4 +33,6 @@ public class YamlCredentialsLoader implements CredentialsLoader {
         }
         return accountClass.cast(mapper.convertValue(credentials.get(credentialsId).get("credentials"), accountClass));
     }
+    @Override
+    public void renewToken() {}
 }
